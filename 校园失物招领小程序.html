@@ -1,34 +1,43 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" xmlns:xlink="http://www.w3.org/1999/xlink">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>校园失物招领小程序 · 原型</title>
+<title>校园失物招领小程序</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f9e6e'/%3E%3Ccircle cx='14' cy='14' r='6.5' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M18.5 18.5L26 26' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
-/* SECTION: base */
+/* ===== tokens ===== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
   --brand: #2f9e6e;
-  --brand-dark: #237a54;
+  --brand-dark: #1f7a54;
+  --brand-deep: #176a48;
   --brand-light: #e6f5ee;
+  --brand-softer: #f0faf5;
   --lost: #e2703a;
-  --found: #2f9e6e;
-  --text: #22303c;
-  --sub: #7a8894;
-  --line: #e5eaee;
-  --bg: #f4f6f8;
+  --lost-dark: #c85a26;
+  --lost-light: #fdf0e8;
+  --text: #1f2d39;
+  --sub: #71808d;
+  --line: #e7ecf0;
+  --bg: #f2f5f7;
   --card: #ffffff;
   --radius: 14px;
+  --shadow: 0 2px 10px rgba(31,45,57,.06);
+  --shadow-lg: 0 10px 28px rgba(31,45,57,.10);
+  --cat-card: #4a7df0; --cat-digital: #8b5cf6; --cat-life: #0ea5a0;
+  --cat-book: #d97706; --cat-cloth: #e0528f; --cat-other: #94a3b8;
 }
-html, body { height: 100%; }
+html { -webkit-text-size-adjust: 100%; }
 body {
-  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
+  font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", system-ui, Arial, sans-serif;
+  background: #e9efec;
   color: var(--text);
   display: flex;
   justify-content: center;
+  min-height: 100vh;
 }
-/* 小程序外壳：桌面端居中为手机宽度，移动端铺满 */
+/* ===== app shell ===== */
 #app {
   width: 100%;
   max-width: 460px;
@@ -37,308 +46,327 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 24px rgba(0,0,0,.08);
+  box-shadow: 0 0 40px rgba(31,45,57,.12);
 }
-/* SECTION: header */
+/* ===== icons ===== */
+.ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.ic-sm { width: 14px; height: 14px; stroke-width: 2; }
+.ic-lg { width: 22px; height: 22px; }
+/* ===== header ===== */
 .app-header {
-  background: linear-gradient(135deg, var(--brand) 0%, #45b98a 100%);
+  position: relative;
+  background: linear-gradient(152deg, var(--brand-deep) 0%, var(--brand) 52%, #43b688 100%);
   color: #fff;
-  padding: 18px 16px 46px;
+  padding: 22px 18px 0;
+  border-radius: 0 0 28px 28px;
+  overflow: hidden;
 }
-.app-header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-.app-header p { font-size: 12px; opacity: .9; margin-top: 4px; }
+.app-header::before, .app-header::after {
+  content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.07); pointer-events: none;
+}
+.app-header::before { width: 190px; height: 190px; right: -70px; top: -80px; }
+.app-header::after { width: 110px; height: 110px; left: -36px; bottom: -52px; }
+.app-header h1 { font-size: 21px; font-weight: 800; letter-spacing: 1px; position: relative; }
+.app-header .sub { font-size: 12.5px; opacity: .92; margin-top: 5px; position: relative; }
 .header-search {
   margin-top: 14px;
-  background: rgba(255,255,255,.95);
+  background: rgba(255,255,255,.96);
+  color: var(--sub);
   border-radius: 999px;
   display: flex;
   align-items: center;
-  padding: 9px 14px;
   gap: 8px;
+  padding: 10px 14px;
+  font-size: 13.5px;
   cursor: pointer;
-  color: var(--sub);
-  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(23,106,72,.22);
+  position: relative;
 }
-/* SECTION: views */
-.view { display: none; flex: 1; padding: 0 14px 88px; }
-.view.active { display: block; }
-.view-home { margin-top: -32px; }
-/* 筛选 tab */
-.filter-bar {
-  display: flex;
-  gap: 8px;
+.header-search .ic { color: var(--brand); }
+/* stats */
+.stats { display: flex; gap: 10px; margin: 14px 0 0; padding-bottom: 20px; position: relative; }
+.stat {
+  flex: 1; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.22);
+  border-radius: 13px; padding: 9px 4px; text-align: center; backdrop-filter: blur(2px);
+}
+.stat b { display: block; font-size: 19px; font-weight: 800; line-height: 1.2; }
+.stat span { font-size: 11px; opacity: .92; }
+/* ===== views ===== */
+.view { display: none; flex: 1; padding: 0 14px 96px; }
+.view.active { display: block; animation: viewIn .2s ease; }
+@keyframes viewIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* ===== filter panel ===== */
+.filter-panel {
+  margin: -16px 0 4px;
   background: var(--card);
-  border-radius: var(--radius);
-  padding: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  z-index: 5;
 }
-.filter-bar button {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 9px 0;
-  border-radius: 10px;
-  font-size: 14px;
-  color: var(--sub);
-  cursor: pointer;
+.type-bar { display: flex; gap: 6px; background: var(--bg); border-radius: 11px; padding: 4px; }
+.type-bar button {
+  flex: 1; border: none; background: transparent; padding: 8px 0; border-radius: 8px;
+  font-size: 13.5px; color: var(--sub); cursor: pointer; font-family: inherit;
 }
-.filter-bar button.on { background: var(--brand-light); color: var(--brand-dark); font-weight: 600; }
-.section-title { font-size: 13px; color: var(--sub); margin: 16px 4px 10px; }
-/* SECTION: card */
+.type-bar button.on { background: var(--card); color: var(--brand-dark); font-weight: 700; box-shadow: 0 1px 5px rgba(31,45,57,.10); }
+.cat-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.chip {
+  flex-shrink: 0; border: 1px solid var(--line); background: #fff; color: var(--sub);
+  font-size: 12px; padding: 5px 12px; border-radius: 999px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cat-other); }
+.chip.on { background: var(--brand-softer); border-color: var(--brand); color: var(--brand-dark); font-weight: 600; }
+.loc-row { margin-top: 9px; display: flex; align-items: center; gap: 6px; background: var(--bg); border-radius: 11px; padding: 6px 12px; }
+.loc-row .ic { color: var(--brand); }
+.loc-row select {
+  flex: 1; border: none; background: transparent; font-size: 13px; color: var(--text);
+  font-family: inherit; outline: none; padding: 3px 0; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2371808d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 2px center; padding-right: 22px;
+}
+/* ===== section title ===== */
+.section-title { font-size: 12.5px; color: var(--sub); margin: 14px 4px 10px; }
+.section-title b { color: var(--text); font-weight: 700; }
+/* ===== card ===== */
 .card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.04);
-  cursor: pointer;
-  transition: transform .12s ease;
+  background: var(--card); border: 1px solid #f0f3f5; border-radius: var(--radius);
+  padding: 13px 14px; margin-bottom: 10px; box-shadow: var(--shadow); cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
-.card:active { transform: scale(.985); }
-.card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.tag {
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 6px;
-  color: #fff;
-  flex-shrink: 0;
+.card:active { transform: scale(.988); }
+@media (hover: hover) { .card:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(31,45,57,.09); } }
+.card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.badge {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 7px; flex-shrink: 0;
 }
-.tag.lost { background: var(--lost); }
-.tag.found { background: var(--found); }
-.tag.done { background: #9aa7b1; }
-.card-title { font-size: 15px; font-weight: 600; flex: 1; }
-.card-meta { font-size: 12px; color: var(--sub); line-height: 1.9; }
-.card-meta span { display: block; }
-.status-done { font-size: 12px; color: #9aa7b1; }
-/* SECTION: empty */
-.empty {
-  text-align: center;
-  color: var(--sub);
-  font-size: 13px;
-  padding: 48px 0;
-  line-height: 2;
-}
-.empty .icon { font-size: 40px; display: block; margin-bottom: 6px; }
-/* SECTION: form */
-.form-card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-top: 14px; }
-.form-card h2 { font-size: 16px; margin-bottom: 14px; }
+.badge.lost { background: var(--lost-light); color: var(--lost-dark); }
+.badge.found { background: var(--brand-light); color: var(--brand-dark); }
+.badge.done { background: #eef1f4; color: #8a97a3; }
+.card-title { font-size: 15px; font-weight: 700; flex: 1; line-height: 1.45; }
+.status-done { font-size: 11.5px; color: #8a97a3; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; }
+.card-meta { font-size: 12px; color: var(--sub); line-height: 2; }
+.card-meta .row { display: flex; align-items: center; gap: 6px; }
+.card-meta .row .ic { color: #9aa8b3; }
+.meta-right { margin-left: auto; display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.cat-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+mark { background: #d9f2e4; color: var(--brand-deep); border-radius: 4px; padding: 0 2px; }
+/* ===== empty ===== */
+.empty { text-align: center; color: var(--sub); font-size: 13px; padding: 42px 0 30px; line-height: 2; }
+.empty .ic { width: 44px; height: 44px; color: #c4cfd7; margin: 0 auto 6px; display: block; stroke-width: 1.3; }
+/* ===== form ===== */
+.form-card { background: var(--card); border-radius: 16px; padding: 16px; margin-top: 14px; box-shadow: var(--shadow); }
+.form-card h2 { font-size: 16px; font-weight: 800; margin-bottom: 14px; }
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 13px; color: var(--text); margin-bottom: 6px; font-weight: 600; }
 .field label i { color: #d9534f; font-style: normal; }
 .field input[type=text], .field textarea, .field select {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  font-family: inherit;
-  color: var(--text);
-  background: #fbfcfd;
-  outline: none;
+  width: 100%; border: 1.5px solid var(--line); border-radius: 11px; padding: 10px 12px;
+  font-size: 14px; font-family: inherit; color: var(--text); background: #fbfcfd; outline: none;
+  transition: border-color .12s ease, background .12s ease;
 }
 .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--brand); background: #fff; }
-.field textarea { resize: vertical; min-height: 76px; }
+.field textarea { resize: vertical; min-height: 74px; }
 .type-switch { display: flex; gap: 8px; }
 .type-switch button {
-  flex: 1;
-  padding: 10px 0;
-  border: 1.5px solid var(--line);
-  background: #fbfcfd;
-  border-radius: 10px;
-  font-size: 14px;
-  color: var(--sub);
-  cursor: pointer;
+  flex: 1; padding: 10px 0; border: 1.5px solid var(--line); background: #fbfcfd;
+  border-radius: 11px; font-size: 13.5px; color: var(--sub); cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
-.type-switch button.on-lost { border-color: var(--lost); color: var(--lost); background: #fdf1ea; font-weight: 600; }
-.type-switch button.on-found { border-color: var(--found); color: var(--found); background: var(--brand-light); font-weight: 600; }
+.type-switch button.on-lost { border-color: var(--lost); color: var(--lost-dark); background: var(--lost-light); font-weight: 700; }
+.type-switch button.on-found { border-color: var(--brand); color: var(--brand-dark); background: var(--brand-light); font-weight: 700; }
+.quick-locs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.quick-locs button {
+  border: 1px dashed var(--line); background: #fff; color: var(--sub); font-size: 11.5px;
+  border-radius: 999px; padding: 4px 10px; cursor: pointer; font-family: inherit;
+}
+.quick-locs button:active { background: var(--brand-softer); border-color: var(--brand); color: var(--brand-dark); }
 .err { color: #d9534f; font-size: 12px; margin-top: 4px; display: none; }
 .btn-primary {
-  width: 100%;
-  border: none;
-  background: var(--brand);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 13px 0;
-  border-radius: 999px;
-  cursor: pointer;
-  margin-top: 4px;
+  width: 100%; border: none; background: linear-gradient(135deg, var(--brand) 0%, #3cb384 100%);
+  color: #fff; font-size: 15.5px; font-weight: 700; padding: 13px 0; border-radius: 999px;
+  cursor: pointer; margin-top: 4px; font-family: inherit; box-shadow: 0 6px 16px rgba(47,158,110,.30);
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
 }
-.btn-primary:active { background: var(--brand-dark); }
-/* SECTION: search view */
-.search-box {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
+.btn-primary:active { background: var(--brand-dark); transform: translateY(1px); }
+/* ===== search view ===== */
+.search-box { display: flex; gap: 8px; margin-top: 14px; }
 .search-box input {
-  flex: 1;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 11px 16px;
-  font-size: 14px;
-  outline: none;
-  background: #fff;
+  flex: 1; border: 1.5px solid var(--line); border-radius: 999px; padding: 11px 16px;
+  font-size: 14px; outline: none; background: #fff; font-family: inherit;
 }
 .search-box input:focus { border-color: var(--brand); }
 .search-box button {
-  border: none;
-  background: var(--brand);
-  color: #fff;
-  border-radius: 999px;
-  padding: 0 20px;
-  font-size: 14px;
-  cursor: pointer;
+  border: none; background: var(--brand); color: #fff; border-radius: 999px; padding: 0 22px;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; gap: 6px;
 }
 .hot-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .hot-tags button {
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--sub);
-  font-size: 12px;
-  border-radius: 999px;
-  padding: 6px 12px;
-  cursor: pointer;
+  border: 1px solid var(--line); background: #fff; color: var(--sub); font-size: 12px;
+  border-radius: 999px; padding: 6px 12px; cursor: pointer; font-family: inherit;
 }
-/* SECTION: detail */
-.detail-card { background: var(--card); border-radius: var(--radius); padding: 18px 16px; margin-top: 14px; }
-.detail-card h2 { font-size: 18px; margin: 10px 0 12px; line-height: 1.5; }
-.detail-row { display: flex; font-size: 14px; padding: 9px 0; border-bottom: 1px dashed var(--line); }
-.detail-row .k { width: 76px; color: var(--sub); flex-shrink: 0; }
-.detail-row .v { flex: 1; line-height: 1.6; }
-.detail-desc { font-size: 14px; line-height: 1.8; color: var(--text); background: var(--brand-light); border-radius: 10px; padding: 12px; margin-top: 12px; }
+.hot-tags button:active { background: var(--brand-softer); color: var(--brand-dark); }
+/* ===== detail ===== */
+.detail-card { background: var(--card); border-radius: 16px; padding: 16px; margin-top: 14px; box-shadow: var(--shadow); }
+.detail-card .head { display: flex; gap: 6px; align-items: center; }
+.detail-card h2 { font-size: 18px; font-weight: 800; margin: 10px 0 12px; line-height: 1.5; }
+.detail-row { display: flex; font-size: 13.5px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.detail-row .k { width: 78px; color: var(--sub); flex-shrink: 0; }
+.detail-row .v { flex: 1; line-height: 1.6; word-break: break-word; }
+.detail-desc { font-size: 13.5px; line-height: 1.85; color: var(--text); background: var(--brand-softer); border-radius: 11px; padding: 12px; margin-top: 12px; }
 .contact-box {
-  margin-top: 14px;
-  border: 1.5px solid var(--brand);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 14px;
-  color: var(--brand-dark);
-  background: #f2fbf7;
+  margin-top: 14px; background: var(--brand-softer); border: 1px solid #d4ecdf;
+  border-radius: 12px; padding: 13px 14px;
+}
+.contact-box .c-head { display: flex; align-items: center; gap: 7px; color: var(--brand-dark); font-weight: 700; font-size: 13.5px; }
+.contact-box .c-text { font-size: 15px; color: var(--text); margin: 8px 0 11px; word-break: break-all; }
+.c-actions { display: flex; gap: 8px; }
+.c-actions button {
+  flex: 1; border: none; border-radius: 999px; padding: 9px 0; font-size: 13px; cursor: pointer;
+  font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-copy { background: var(--brand); color: #fff; font-weight: 600; }
+.btn-copy:active { background: var(--brand-dark); }
+.btn-copy-info { background: #fff; color: var(--brand-dark); border: 1.5px solid var(--brand); font-weight: 600; }
+.btn-status {
+  margin-top: 12px; width: 100%; border: 1.5px solid var(--lost); background: var(--lost-light);
+  color: var(--lost-dark); padding: 12px 0; border-radius: 999px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
 }
 .btn-back {
-  margin-top: 14px;
-  width: 100%;
-  border: 1px solid var(--line);
-  background: #fff;
-  color: var(--sub);
-  padding: 12px 0;
-  border-radius: 999px;
-  font-size: 14px;
-  cursor: pointer;
+  margin-top: 12px; width: 100%; border: 1.5px solid var(--line); background: #fff; color: var(--sub);
+  padding: 12px 0; border-radius: 999px; font-size: 14px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
 }
-.btn-status {
-  margin-top: 10px;
-  width: 100%;
-  border: none;
-  background: #fdf1ea;
-  color: var(--lost);
-  padding: 12px 0;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-/* SECTION: mine */
-.mine-card { position: relative; }
-.mine-actions { display: flex; gap: 8px; margin-top: 10px; }
+/* ===== mine ===== */
+.mine-card .mine-actions { display: flex; gap: 8px; margin-top: 11px; }
 .mine-actions button {
-  flex: 1;
-  border: 1px solid var(--brand);
-  background: #fff;
-  color: var(--brand-dark);
-  border-radius: 999px;
-  padding: 9px 0;
-  font-size: 13px;
-  cursor: pointer;
+  flex: 1; border: 1.5px solid var(--brand); background: #fff; color: var(--brand-dark);
+  border-radius: 999px; padding: 8px 0; font-size: 12.5px; cursor: pointer; font-family: inherit;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-weight: 600;
 }
 .mine-actions button.gray { border-color: var(--line); color: var(--sub); }
-/* SECTION: tabbar */
+.mine-actions button.done-act { border-color: var(--lost); color: var(--lost-dark); background: var(--lost-light); }
+/* ===== tabbar ===== */
 .tabbar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 460px;
-  background: #fff;
-  border-top: 1px solid var(--line);
-  display: flex;
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  z-index: 20;
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 460px; background: #fff; border-top: 1px solid var(--line);
+  display: flex; padding: 7px 0 calc(7px + env(safe-area-inset-bottom)); z-index: 20;
 }
 .tabbar button {
-  flex: 1;
-  border: none;
-  background: none;
-  font-size: 12px;
-  color: var(--sub);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 4px 0;
+  flex: 1; border: none; background: none; font-size: 11px; color: var(--sub); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 3px 0;
+  font-family: inherit;
 }
-.tabbar button .ico { font-size: 20px; line-height: 1; }
-.tabbar button.on { color: var(--brand-dark); font-weight: 600; }
-.tabbar button.pub .ico {
-  background: var(--brand);
-  color: #fff;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
-  margin-top: -18px;
-  box-shadow: 0 4px 10px rgba(47,158,110,.35);
+.tabbar button .ic { color: currentColor; }
+.tabbar button.on { color: var(--brand-dark); font-weight: 700; }
+.tabbar button.pub { position: relative; }
+.tabbar button.pub .fab {
+  width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--brand) 0%, #3cb384 100%);
+  color: #fff; display: flex; align-items: center; justify-content: center; margin-top: -20px;
+  box-shadow: 0 5px 14px rgba(47,158,110,.40);
 }
-/* SECTION: toast */
+.tabbar button.pub .fab:active { transform: scale(.95); }
+/* ===== toast ===== */
 #toast {
-  position: fixed;
-  left: 50%;
-  top: 40%;
-  transform: translate(-50%, -50%);
-  background: rgba(30,40,48,.92);
-  color: #fff;
-  font-size: 14px;
-  padding: 12px 22px;
-  border-radius: 10px;
-  z-index: 99;
-  display: none;
-  max-width: 78%;
-  text-align: center;
-  line-height: 1.6;
+  position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%) scale(.95);
+  background: rgba(28,40,50,.93); color: #fff; font-size: 13.5px; padding: 11px 20px;
+  border-radius: 11px; z-index: 99; display: none; max-width: 80%; text-align: center; line-height: 1.6;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+}
+#toast.show { display: block; animation: toastIn .18s ease forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, -50%) scale(.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+/* ===== a11y ===== */
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- SECTION: view-home -->
-  <section class="view view-home" id="view-home">
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c1.4-3.4 4.2-5 7.5-5s6.1 1.6 7.5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.2-6.5-10.2a6.5 6.5 0 0 1 13 0C18.5 15.8 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l1.5 4.5L8 10a12 12 0 0 0 6 6l1.5-2.5L20 15v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></symbol>
+    <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8 12.2 2.8 2.8 5.2-5.6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M14.5 4.5 19.5 9.5 9 20H4v-5z"/><path d="M12 7l5 5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 3.5h7L20 13l-7 7L3.5 10.5z"/><circle cx="8" cy="8" r="1.6"/></symbol>
+  </svg>
+
+  <!-- ===== 视图：首页 ===== -->
+  <section class="view view-home active" id="view-home">
     <header class="app-header">
       <h1>校园失物招领</h1>
-      <p>集中发布 · 快速搜索 · 让失物早日回家</p>
-      <div class="header-search" id="home-search-entry">🔍 搜索物品名称 / 地点 / 关键词</div>
+      <p class="sub">集中发布 · 快速搜索 · 让失物早日回家</p>
+      <div class="header-search" id="home-search-entry">
+        <svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>
+        <span>搜索物品名称 / 地点 / 关键词</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="st-open">0</b><span>进行中</span></div>
+        <div class="stat"><b id="st-done">0</b><span>已解决</span></div>
+        <div class="stat"><b id="st-mine">0</b><span>我的发布</span></div>
+      </div>
     </header>
-    <div class="filter-bar" id="filter-bar">
-      <button data-f="all" class="on">全部</button>
-      <button data-f="lost">寻物启事</button>
-      <button data-f="found">招领启事</button>
+    <div class="filter-panel">
+      <div class="type-bar" id="type-bar">
+        <button data-f="all" class="on">全部</button>
+        <button data-f="lost">寻物启事</button>
+        <button data-f="found">招领启事</button>
+      </div>
+      <div class="cat-row" id="cat-row"></div>
+      <div class="loc-row">
+        <svg class="ic ic-sm"><use href="#i-pin" xlink:href="#i-pin"/></svg>
+        <select id="loc-filter">
+          <option value="">全部地点</option>
+        </select>
+      </div>
     </div>
     <div class="section-title" id="home-count"></div>
     <div id="home-list"></div>
   </section>
 
-  <!-- SECTION: view-publish -->
+  <!-- ===== 视图：搜索 ===== -->
+  <section class="view" id="view-search">
+    <div class="search-box">
+      <input type="text" id="s-input" placeholder="输入物品名称、地点或关键词">
+      <button id="s-btn"><svg class="ic ic-sm"><use href="#i-search" xlink:href="#i-search"/></svg>搜索</button>
+    </div>
+    <div class="hot-tags" id="hot-tags">
+      <button>校园卡</button><button>耳机</button><button>雨伞</button><button>钥匙</button><button>水杯</button><button>图书馆</button>
+    </div>
+    <div class="section-title" id="search-count">热门搜索词可一键搜索</div>
+    <div id="search-list">
+      <div class="empty">
+        <svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>
+        输入关键词，查找校园内的失物与招领信息
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 视图：发布 ===== -->
   <section class="view" id="view-publish">
     <div class="form-card">
       <h2 id="publish-title">发布信息</h2>
       <div class="field">
         <label>信息类型 <i>*</i></label>
         <div class="type-switch" id="type-switch">
-          <button data-t="lost" class="on-lost">我丢东西了（寻物）</button>
-          <button data-t="found">我捡到东西了（招领）</button>
+          <button data-t="lost" class="on-lost"><svg class="ic ic-sm"><use href="#i-search" xlink:href="#i-search"/></svg>我丢东西了（寻物）</button>
+          <button data-t="found"><svg class="ic ic-sm"><use href="#i-check" xlink:href="#i-check"/></svg>我捡到东西了（招领）</button>
         </div>
       </div>
       <div class="field">
@@ -360,11 +388,14 @@ body {
       <div class="field">
         <label for="f-location">遗失 / 拾获地点 <i>*</i></label>
         <input type="text" id="f-location" placeholder="如：图书馆三楼自习区" maxlength="30">
+        <div class="quick-locs" id="quick-locs">
+          <button>图书馆</button><button>食堂</button><button>教学楼</button><button>操场</button><button>体育馆</button><button>宿舍区</button>
+        </div>
         <div class="err" id="e-location">请填写地点</div>
       </div>
       <div class="field">
         <label for="f-time">大致时间</label>
-        <input type="text" id="f-time" placeholder="如：09-22 下午课后" maxlength="30">
+        <input type="text" id="f-time" placeholder="如：09-22 下午课后（留空自动填当前时间）" maxlength="30">
       </div>
       <div class="field">
         <label for="f-desc">详细描述</label>
@@ -375,43 +406,28 @@ body {
         <input type="text" id="f-contact" placeholder="如：微信 / QQ / 电话" maxlength="40">
         <div class="err" id="e-contact">请填写联系方式</div>
       </div>
-      <button class="btn-primary" id="btn-submit" data-primary-action="publish">确认发布</button>
+      <button class="btn-primary" id="btn-submit"><svg class="ic ic-sm"><use href="#i-check" xlink:href="#i-check"/></svg><span id="btn-submit-text">确认发布</span></button>
     </div>
   </section>
 
-  <!-- SECTION: view-search -->
-  <section class="view" id="view-search">
-    <div class="search-box">
-      <input type="text" id="s-input" placeholder="输入物品名称、地点或关键词">
-      <button id="s-btn" data-primary-action="search">搜索</button>
-    </div>
-    <div class="hot-tags" id="hot-tags">
-      <button>校园卡</button><button>耳机</button><button>雨伞</button><button>钥匙</button><button>水杯</button><button>图书馆</button>
-    </div>
-    <div class="section-title" id="search-count">热门搜索词可一键搜索</div>
-    <div id="search-list">
-      <div class="empty"><span class="icon">🔍</span>输入关键词，查找校园内的失物与招领信息</div>
-    </div>
-  </section>
-
-  <!-- SECTION: view-detail -->
+  <!-- ===== 视图：详情 ===== -->
   <section class="view" id="view-detail">
     <div class="detail-card" id="detail-card"></div>
-    <button class="btn-back" id="btn-back">← 返回首页</button>
+    <button class="btn-back" id="btn-back"><svg class="ic ic-sm"><use href="#i-back" xlink:href="#i-back"/></svg>返回首页</button>
   </section>
 
-  <!-- SECTION: view-mine -->
+  <!-- ===== 视图：我的发布 ===== -->
   <section class="view" id="view-mine">
     <div class="section-title" style="margin-top:16px">我发布的信息（可修改状态）</div>
     <div id="mine-list"></div>
   </section>
 
-  <!-- SECTION: tabbar -->
+  <!-- ===== 底部导航 ===== -->
   <nav class="tabbar" id="tabbar">
-    <button data-v="home" class="on"><span class="ico">🏠</span>首页</button>
-    <button data-v="search"><span class="ico">🔍</span>搜索</button>
-    <button data-v="publish" class="pub"><span class="ico">＋</span>发布</button>
-    <button data-v="mine"><span class="ico">👤</span>我的发布</button>
+    <button data-v="home" class="on"><svg class="ic"><use href="#i-home" xlink:href="#i-home"/></svg>首页</button>
+    <button data-v="search"><svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>搜索</button>
+    <button data-v="publish" class="pub"><span class="fab"><svg class="ic ic-lg"><use href="#i-plus" xlink:href="#i-plus"/></svg></span>发布</button>
+    <button data-v="mine"><svg class="ic"><use href="#i-user" xlink:href="#i-user"/></svg>我的发布</button>
   </nav>
 
   <div id="toast"></div>
@@ -419,12 +435,18 @@ body {
 
 <script src="assets/data.js"></script>
 <script>
-/* SECTION: state */
-var LS_KEY = "lf_proto_items_v1";
+/* ===== 状态 ===== */
+var LS_KEY = "lf_proto_items_v2";
+var CATS = ["卡证证件", "数码设备", "生活用品", "书籍资料", "衣物配饰", "其他"];
+var CAT_COLORS = { "卡证证件": "var(--cat-card)", "数码设备": "var(--cat-digital)", "生活用品": "var(--cat-life)", "书籍资料": "var(--cat-book)", "衣物配饰": "var(--cat-cloth)", "其他": "var(--cat-other)" };
 var items = loadItems();
-var curFilter = "all";
+var curType = "all";
+var curCat = "";
+var curLoc = "";
 var curDetailId = null;
 var pubType = "lost";
+var editId = null;
+var toastTimer = null;
 
 function loadItems() {
   try {
@@ -443,18 +465,28 @@ function esc(s) {
 }
 function typeText(t) { return t === "lost" ? "寻物" : "招领"; }
 function statusText(it) { return it.status === "done" ? "已解决" : "进行中"; }
-
-/* SECTION: toast */
-var toastTimer = null;
+function catColor(c) { return CAT_COLORS[c] || "var(--cat-other)"; }
+function relTime(ts) {
+  if (!ts) return "";
+  var diff = Date.now() - ts;
+  var min = 60000, hour = 3600000, day = 86400000;
+  if (diff < min) return "刚刚";
+  if (diff < hour) return Math.floor(diff / min) + " 分钟前";
+  if (diff < day) return Math.floor(diff / hour) + " 小时前";
+  if (diff < 7 * day) return Math.floor(diff / day) + " 天前";
+  var d = new Date(ts);
+  var pad = function (n) { return n < 10 ? "0" + n : n; };
+  return pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+}
 function toast(msg) {
   var el = document.getElementById("toast");
   el.textContent = msg;
-  el.style.display = "block";
+  el.classList.add("show");
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function () { el.style.display = "none"; }, 1800);
+  toastTimer = setTimeout(function () { el.classList.remove("show"); }, 1800);
 }
 
-/* SECTION: nav */
+/* ===== 导航 ===== */
 function show(view) {
   document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
   document.getElementById("view-" + view).classList.add("active");
@@ -476,62 +508,133 @@ document.getElementById("home-search-entry").addEventListener("click", function 
   document.getElementById("s-input").focus();
 });
 
-/* SECTION: home render */
-function cardHTML(it) {
+/* ===== 统计 ===== */
+function renderStats() {
+  var open = 0, done = 0, mine = 0;
+  items.forEach(function (it) {
+    if (it.status === "done") done++; else open++;
+    if (it.mine) mine++;
+  });
+  document.getElementById("st-open").textContent = open;
+  document.getElementById("st-done").textContent = done;
+  document.getElementById("st-mine").textContent = mine;
+}
+
+/* ===== 首页筛选 ===== */
+function renderCatChips() {
+  var html = '<button class="chip on" data-c=""><span class="dot" style="background:var(--cat-other)"></span>全部类别</button>';
+  html += CATS.map(function (c) {
+    return '<button class="chip" data-c="' + c + '"><span class="dot" style="background:' + catColor(c) + '"></span>' + c + "</button>";
+  }).join("");
+  document.getElementById("cat-row").innerHTML = html;
+}
+function renderLocFilter() {
+  var locs = [];
+  items.forEach(function (it) { if (it.location && locs.indexOf(it.location) < 0) locs.push(it.location); });
+  locs.sort();
+  var sel = document.getElementById("loc-filter");
+  var keep = curLoc;
+  sel.innerHTML = '<option value="">全部地点</option>' + locs.map(function (l) {
+    return '<option value="' + esc(l) + '">' + esc(l) + "</option>";
+  }).join("");
+  sel.value = keep;
+}
+document.getElementById("type-bar").addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (!b) return;
+  curType = b.dataset.f;
+  document.querySelectorAll("#type-bar button").forEach(function (x) { x.classList.toggle("on", x === b); });
+  renderHome();
+});
+document.getElementById("cat-row").addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (!b) return;
+  curCat = b.dataset.c;
+  document.querySelectorAll("#cat-row .chip").forEach(function (x) { x.classList.toggle("on", x === b); });
+  renderHome();
+});
+document.getElementById("loc-filter").addEventListener("change", function () {
+  curLoc = this.value;
+  renderHome();
+});
+
+/* ===== 首页列表 ===== */
+function cardHTML(it, kw) {
+  var title = esc(it.title), loc = esc(it.location), time = esc(it.time || "时间未填");
+  if (kw) {
+    var re = new RegExp("(" + kw.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi");
+    title = title.replace(re, "<mark>$1</mark>");
+    loc = loc.replace(re, "<mark>$1</mark>");
+  }
   return '<div class="card" data-id="' + it.id + '">' +
     '<div class="card-top">' +
-      '<span class="tag ' + it.type + '">' + typeText(it.type) + '</span>' +
-      '<span class="card-title">' + esc(it.title) + '</span>' +
-      (it.status === "done" ? '<span class="status-done">已解决</span>' : '') +
-    '</div>' +
+      '<span class="badge ' + it.type + '">' + typeText(it.type) + "启事</span>" +
+      '<span class="card-title">' + title + "</span>" +
+      (it.status === "done" ? '<span class="status-done"><svg class="ic ic-sm"><use href="#i-done" xlink:href="#i-done"/></svg>已解决</span>' : "") +
+    "</div>" +
     '<div class="card-meta">' +
-      '<span>📍 ' + esc(it.location) + '</span>' +
-      '<span>🕒 ' + esc(it.time || "时间未填") + '　·　' + esc(it.category) + '</span>' +
-    '</div></div>';
+      '<div class="row"><svg class="ic ic-sm"><use href="#i-pin" xlink:href="#i-pin"/></svg><span>' + loc + "</span>" +
+        '<span class="meta-right"><span class="cat-dot" style="background:' + catColor(it.category) + '"></span>' + esc(it.category) + "</span></div>" +
+      '<div class="row"><svg class="ic ic-sm"><use href="#i-clock" xlink:href="#i-clock"/></svg><span>' + time + '</span><span class="meta-right">' + relTime(it.createdAt) + "</span></div>" +
+    "</div></div>";
 }
 function renderHome() {
   var list = items.filter(function (it) {
-    return it.status !== "done" && (curFilter === "all" || it.type === curFilter);
+    if (it.status === "done") return false;
+    if (curType !== "all" && it.type !== curType) return false;
+    if (curCat && it.category !== curCat) return false;
+    if (curLoc && it.location !== curLoc) return false;
+    return true;
   });
   list.sort(function (a, b) { return b.createdAt - a.createdAt; });
-  document.getElementById("home-count").textContent =
-    "共 " + list.length + " 条进行中的信息（已解决的不再显示）";
+  var filters = [curType !== "all" ? typeText(curType) + "启事" : "", curCat, curLoc].filter(Boolean).join(" · ");
+  document.getElementById("home-count").innerHTML = filters
+    ? '筛选：<b>' + esc(filters) + '</b>，共 ' + list.length + " 条进行中的信息"
+    : "共 <b>" + list.length + "</b> 条进行中的信息（已解决的不再显示）";
   document.getElementById("home-list").innerHTML = list.length
-    ? list.map(cardHTML).join("")
-    : '<div class="empty"><span class="icon">📭</span>暂无该类型信息<br>点击底部“发布”按钮发布第一条吧</div>';
+    ? list.map(function (it) { return cardHTML(it); }).join("")
+    : '<div class="empty"><svg class="ic"><use href="#i-box" xlink:href="#i-box"/></svg>没有符合条件的信息<br>点击底部“发布”按钮发布第一条吧</div>';
+  renderStats();
 }
-document.getElementById("filter-bar").addEventListener("click", function (e) {
-  var b = e.target.closest("button");
-  if (!b) return;
-  curFilter = b.dataset.f;
-  document.querySelectorAll("#filter-bar button").forEach(function (x) { x.classList.toggle("on", x === b); });
-  renderHome();
-});
 document.getElementById("home-list").addEventListener("click", function (e) {
   var c = e.target.closest(".card");
   if (c) openDetail(c.dataset.id);
 });
 
-/* SECTION: detail */
+/* ===== 详情 ===== */
 function openDetail(id) {
   var it = items.find(function (x) { return x.id === id; });
   if (!it) return;
   curDetailId = id;
   var mineBtn = it.mine && it.status !== "done"
-    ? '<button class="btn-status" id="btn-done">标记为已解决</button>' : "";
+    ? '<button class="btn-status" id="btn-done"><svg class="ic ic-sm"><use href="#i-done" xlink:href="#i-done"/></svg>标记为已解决</button>' : "";
   document.getElementById("detail-card").innerHTML =
-    '<span class="tag ' + it.type + '">' + typeText(it.type) + '启事</span>' +
-    (it.status === "done" ? ' <span class="tag done">已解决</span>' : '') +
-    '<h2>' + esc(it.title) + '</h2>' +
-    '<div class="detail-row"><span class="k">物品分类</span><span class="v">' + esc(it.category) + '</span></div>' +
-    '<div class="detail-row"><span class="k">' + (it.type === "lost" ? "遗失地点" : "拾获地点") + '</span><span class="v">' + esc(it.location) + '</span></div>' +
-    '<div class="detail-row"><span class="k">大致时间</span><span class="v">' + esc(it.time || "未填写") + '</span></div>' +
-    '<div class="detail-row"><span class="k">发布人</span><span class="v">' + esc(it.owner) + '</span></div>' +
-    '<div class="detail-row"><span class="k">当前状态</span><span class="v">' + statusText(it) + '</span></div>' +
-    (it.desc ? '<div class="detail-desc">' + esc(it.desc) + '</div>' : '') +
-    '<div class="contact-box">📞 联系方式：' + esc(it.contact) + '</div>' +
+    '<div class="head">' +
+      '<span class="badge ' + it.type + '">' + typeText(it.type) + "启事</span>" +
+      (it.status === "done" ? '<span class="badge done">已解决</span>' : "") +
+    "</div>" +
+    "<h2>" + esc(it.title) + "</h2>" +
+    '<div class="detail-row"><span class="k">物品分类</span><span class="v"><span class="cat-dot" style="background:' + catColor(it.category) + '"></span> ' + esc(it.category) + "</span></div>" +
+    '<div class="detail-row"><span class="k">' + (it.type === "lost" ? "遗失地点" : "拾获地点") + '</span><span class="v">' + esc(it.location) + "</span></div>" +
+    '<div class="detail-row"><span class="k">大致时间</span><span class="v">' + esc(it.time || "未填写") + "</span></div>" +
+    '<div class="detail-row"><span class="k">发布人</span><span class="v">' + esc(it.owner) + "</span></div>" +
+    '<div class="detail-row"><span class="k">当前状态</span><span class="v">' + statusText(it) + "</span></div>" +
+    (it.desc ? '<div class="detail-desc">' + esc(it.desc) + "</div>" : "") +
+    '<div class="contact-box">' +
+      '<div class="c-head"><svg class="ic ic-sm"><use href="#i-phone" xlink:href="#i-phone"/></svg>联系方式</div>' +
+      '<div class="c-text">' + esc(it.contact) + "</div>" +
+      '<div class="c-actions">' +
+        '<button class="btn-copy" id="btn-copy"><svg class="ic ic-sm"><use href="#i-copy" xlink:href="#i-copy"/></svg>复制联系方式</button>' +
+        '<button class="btn-copy-info" id="btn-copy-info"><svg class="ic ic-sm"><use href="#i-tag" xlink:href="#i-tag"/></svg>复制失物信息</button>' +
+      "</div></div>" +
     mineBtn;
   show("detail");
+  document.getElementById("btn-copy").addEventListener("click", function () {
+    copyText(it.contact, "联系方式已复制到剪贴板");
+  });
+  document.getElementById("btn-copy-info").addEventListener("click", function () {
+    copyText(buildShareText(it), "失物信息已复制，可直接粘贴分享");
+  });
   var doneBtn = document.getElementById("btn-done");
   if (doneBtn) doneBtn.addEventListener("click", function () {
     it.status = "done";
@@ -540,11 +643,43 @@ function openDetail(id) {
     openDetail(id);
   });
 }
+function buildShareText(it) {
+  var lines = ["【" + typeText(it.type) + "启事】" + it.title,
+    "物品分类：" + it.category,
+    (it.type === "lost" ? "遗失地点：" : "拾获地点：") + it.location,
+    "大致时间：" + (it.time || "未填写")];
+  if (it.desc) lines.push("详细描述：" + it.desc);
+  lines.push("联系方式：" + it.contact);
+  lines.push("—— 来自「校园失物招领」小程序");
+  return lines.join("\n");
+}
 document.getElementById("btn-back").addEventListener("click", function () { show("home"); });
 
-/* SECTION: publish */
-var editId = null;
+/* ===== 复制 ===== */
+function copyText(txt, okMsg) {
+  function fallback() {
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      toast(okMsg);
+    } catch (e) {
+      toast("复制失败，请长按手动复制");
+    }
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt).then(function () { toast(okMsg); }, fallback);
+  } else {
+    fallback();
+  }
+}
 
+/* ===== 发布 ===== */
 function resetPublishForm() {
   editId = null;
   pubType = "lost";
@@ -556,12 +691,11 @@ function resetPublishForm() {
     document.getElementById(id).style.display = "none";
   });
   document.getElementById("publish-title").textContent = "发布信息";
-  document.getElementById("btn-submit").textContent = "确认发布";
+  document.getElementById("btn-submit-text").textContent = "确认发布";
   document.querySelectorAll("#type-switch button").forEach(function (x) {
     x.className = x.dataset.t === "lost" ? "on-lost" : "";
   });
 }
-
 function openEdit(id) {
   var it = items.find(function (x) { return x.id === id; });
   if (!it) return;
@@ -574,14 +708,13 @@ function openEdit(id) {
   document.getElementById("f-desc").value = it.desc || "";
   document.getElementById("f-contact").value = it.contact;
   document.getElementById("publish-title").textContent = "编辑信息";
-  document.getElementById("btn-submit").textContent = "保存修改";
+  document.getElementById("btn-submit-text").textContent = "保存修改";
   document.querySelectorAll("#type-switch button").forEach(function (x) {
     x.className = "";
     if (x.dataset.t === pubType) x.className = pubType === "lost" ? "on-lost" : "on-found";
   });
   show("publish");
 }
-
 document.getElementById("type-switch").addEventListener("click", function (e) {
   var b = e.target.closest("button");
   if (!b) return;
@@ -590,6 +723,12 @@ document.getElementById("type-switch").addEventListener("click", function (e) {
     x.className = "";
     if (x === b) x.className = pubType === "lost" ? "on-lost" : "on-found";
   });
+});
+document.getElementById("quick-locs").addEventListener("click", function (e) {
+  var b = e.target.closest("button");
+  if (!b) return;
+  var inp = document.getElementById("f-location");
+  inp.value = inp.value ? inp.value + "、" + b.textContent : b.textContent;
 });
 document.getElementById("btn-submit").addEventListener("click", function () {
   var title = document.getElementById("f-title").value.trim();
@@ -606,7 +745,6 @@ document.getElementById("btn-submit").addEventListener("click", function () {
   var pad = function (n) { return n < 10 ? "0" + n : n; };
   var defaultTime = document.getElementById("f-time").value.trim() ||
     (pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes()));
-
   if (editId) {
     var it = items.find(function (x) { return x.id === editId; });
     if (it) {
@@ -621,10 +759,10 @@ document.getElementById("btn-submit").addEventListener("click", function () {
     saveItems();
     resetPublishForm();
     toast("修改已保存");
+    renderLocFilter();
     show("mine");
     return;
   }
-
   items.unshift({
     id: "u" + Date.now(),
     type: pubType,
@@ -641,11 +779,12 @@ document.getElementById("btn-submit").addEventListener("click", function () {
   });
   saveItems();
   resetPublishForm();
+  renderLocFilter();
   toast("发布成功！信息已显示在首页");
   show("home");
 });
 
-/* SECTION: search */
+/* ===== 搜索 ===== */
 function doSearch(kw) {
   kw = kw.trim();
   if (!kw) { toast("请输入搜索关键词"); return; }
@@ -655,11 +794,11 @@ function doSearch(kw) {
       (it.title + it.location + it.category + it.desc + it.type).toLowerCase().indexOf(k) >= 0;
   });
   res.sort(function (a, b) { return b.createdAt - a.createdAt; });
-  document.getElementById("search-count").textContent =
-    "“" + kw + "” 的搜索结果：共 " + res.length + " 条";
+  document.getElementById("search-count").innerHTML =
+    "“" + esc(kw) + "” 的搜索结果：共 <b>" + res.length + "</b> 条";
   document.getElementById("search-list").innerHTML = res.length
-    ? res.map(cardHTML).join("")
-    : '<div class="empty"><span class="icon">🙁</span>没有找到与“' + esc(kw) + '”相关的信息<br>换个关键词试试，或发布一条新信息</div>';
+    ? res.map(function (it) { return cardHTML(it, k); }).join("")
+    : '<div class="empty"><svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>没有找到与“' + esc(kw) + '”相关的信息<br>换个关键词试试，或发布一条新信息</div>';
 }
 document.getElementById("s-btn").addEventListener("click", function () {
   doSearch(document.getElementById("s-input").value);
@@ -678,24 +817,25 @@ document.getElementById("search-list").addEventListener("click", function (e) {
   if (c) openDetail(c.dataset.id);
 });
 
-/* SECTION: mine */
+/* ===== 我的发布 ===== */
 function renderMine() {
   var mine = items.filter(function (it) { return it.mine; });
   mine.sort(function (a, b) { return b.createdAt - a.createdAt; });
   document.getElementById("mine-list").innerHTML = mine.length
     ? mine.map(function (it) {
         return '<div class="card mine-card" data-id="' + it.id + '">' +
-          '<div class="card-top"><span class="tag ' + it.type + '">' + typeText(it.type) + '</span>' +
-          '<span class="card-title">' + esc(it.title) + '</span>' +
-          '<span class="status-done">' + statusText(it) + '</span></div>' +
-          '<div class="card-meta"><span>📍 ' + esc(it.location) + '　🕒 ' + esc(it.time) + '</span></div>' +
+          '<div class="card-top"><span class="badge ' + it.type + '">' + typeText(it.type) + "启事</span>" +
+          '<span class="card-title">' + esc(it.title) + "</span>" +
+          '<span class="status-done"><svg class="ic ic-sm"><use href="#i-done" xlink:href="#i-done"/></svg>' + statusText(it) + "</span></div>" +
+          '<div class="card-meta"><div class="row"><svg class="ic ic-sm"><use href="#i-pin" xlink:href="#i-pin"/></svg><span>' + esc(it.location) + '</span><span class="meta-right"><svg class="ic ic-sm"><use href="#i-clock" xlink:href="#i-clock"/></svg>' + esc(it.time) + "</span></div></div>" +
           '<div class="mine-actions">' +
-            (it.status !== "done" ? '<button data-act="done">标记为已解决</button>' : '') +
-            (it.status !== "done" ? '<button data-act="edit">编辑修改</button>' : '') +
-            '<button class="gray" data-act="view">查看详情</button>' +
-          '</div></div>';
+            (it.status !== "done" ? '<button class="done-act" data-act="done"><svg class="ic ic-sm"><use href="#i-done" xlink:href="#i-done"/></svg>标记已解决</button>' : "") +
+            (it.status !== "done" ? '<button data-act="edit"><svg class="ic ic-sm"><use href="#i-edit" xlink:href="#i-edit"/></svg>编辑修改</button>' : "") +
+            '<button class="gray" data-act="view"><svg class="ic ic-sm"><use href="#i-eye" xlink:href="#i-eye"/></svg>查看详情</button>' +
+          "</div></div>";
       }).join("")
-    : '<div class="empty"><span class="icon">📝</span>你还没有发布过信息<br>点击底部“＋”发布第一条</div>';
+    : '<div class="empty"><svg class="ic"><use href="#i-user" xlink:href="#i-user"/></svg>你还没有发布过信息<br>点击底部“＋”发布第一条</div>';
+  renderStats();
 }
 document.getElementById("mine-list").addEventListener("click", function (e) {
   var act = e.target.closest("button");
@@ -715,7 +855,9 @@ document.getElementById("mine-list").addEventListener("click", function (e) {
   }
 });
 
-/* SECTION: init */
+/* ===== 初始化 ===== */
+renderCatChips();
+renderLocFilter();
 renderHome();
 show("home");
 </script>

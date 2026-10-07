@@ -112,5 +112,33 @@ window.LF_SEED = [
     mine: false,
     status: "done",
     createdAt: 1758156600000
+  },
+  {
+    id: "s9",
+    type: "found",
+    title: "黑色连帽卫衣（XL 码）",
+    category: "衣物配饰",
+    location: "二食堂二楼",
+    time: "09-22 12:30",
+    desc: "袖口内侧有姓名缩写“LY”，已洗净叠好放在二楼服务台，请失主凭特征认领。",
+    contact: "二食堂服务台（电话：0591-8*******）",
+    owner: "食堂 刘阿姨",
+    mine: false,
+    status: "open",
+    createdAt: 1758540000000
+  },
+  {
+    id: "s10",
+    type: "lost",
+    title: "银框近视眼镜",
+    category: "其他",
+    location: "机房 A201",
+    time: "09-22 16:10",
+    desc: "黑色眼镜盒，盒内附有眼镜布，镜腿螺丝有点松。上机课结束后遗忘在座位上。",
+    contact: "微信：wangle_2024",
+    owner: "2024级 王同学",
+    mine: false,
+    status: "open",
+    createdAt: 1758530000000
   }
 ];
