@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>校园失物招领小程序</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f9e6e'/%3E%3Ccircle cx='14' cy='14' r='6.5' fill='none' stroke='white' stroke-width='3'/%3E%3Cpath d='M18.5 18.5L26 26' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <div class="local-note">本地演示版 · 数据仅保存在当前浏览器 · 初始信息均为虚构示例</div>
+  <p id="storage-error" class="error-banner" role="alert" hidden></p>
+
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c1.4-3.4 4.2-5 7.5-5s6.1 1.6 7.5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.2-6.5-10.2a6.5 6.5 0 0 1 13 0C18.5 15.8 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.4"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l1.5 4.5L8 10a12 12 0 0 0 6 6l1.5-2.5L20 15v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5 12 12l8.5-4.5M12 12v9"/></symbol>
+    <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="m8 12.2 2.8 2.8 5.2-5.6"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M14.5 4.5 19.5 9.5 9 20H4v-5z"/><path d="M12 7l5 5"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  </svg>
+
+  <!-- ===== 视图：首页 ===== -->
+  <section class="view view-home active" id="view-home">
+    <header class="app-header">
+      <h1>校园失物招领</h1>
+      <p class="sub">集中发布 · 快速搜索 · 让失物早日回家</p>
+      <button class="header-search" id="home-search-entry" type="button">
+        <svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>
+        <span>搜索物品名称 / 地点 / 关键词</span>
+      </button>
+    </header>
+    <div class="filter-panel">
+      <div class="type-bar" id="type-bar">
+        <button data-f="all" class="on">全部</button>
+        <button data-f="lost">寻物启事</button>
+        <button data-f="found">招领启事</button>
+      </div>
+      <div class="cat-row" id="cat-row"></div>
+      <div class="loc-row">
+        <svg class="ic ic-sm"><use href="#i-pin" xlink:href="#i-pin"/></svg>
+        <select id="loc-filter" aria-label="按地点筛选">
+          <option value="">全部地点</option>
+        </select>
+        <select id="status-filter" aria-label="按状态筛选"><option value="open">进行中</option><option value="all">全部状态</option><option value="done">已找到 / 已归还</option></select>
+      </div>
+    </div>
+    <div class="section-title" id="home-count"></div>
+    <div id="home-list"></div>
+  </section>
+
+  <!-- ===== 视图：搜索 ===== -->
+  <section class="view" id="view-search">
+    <h2 class="page-heading">搜索信息</h2><p class="page-hint">搜索涵盖进行中和已完成的信息，避免重复联系。</p>
+    <div class="search-box">
+      <input type="text" id="s-input" aria-label="搜索关键词" maxlength="80" placeholder="输入物品名称、地点或关键词">
+      <button id="s-btn"><svg class="ic ic-sm"><use href="#i-search" xlink:href="#i-search"/></svg>搜索</button>
+    </div>
+    <div class="hot-tags" id="hot-tags">
+      <button>校园卡</button><button>耳机</button><button>雨伞</button><button>钥匙</button><button>水杯</button><button>图书馆</button>
+    </div>
+    <div class="section-title" id="search-count">热门搜索词可一键搜索</div>
+    <div id="search-list">
+      <div class="empty">
+        <svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>
+        输入关键词，查找校园内的失物与招领信息
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 视图：发布 ===== -->
+  <section class="view" id="view-publish">
+    <div class="form-card">
+      <p class="page-hint">请填写可辨认的特征，领取前核对细节。联系方式会公开展示。</p>
+      <h2 id="publish-title">发布信息</h2>
+      <div class="field">
+        <label>信息类型 <i>*</i></label>
+        <div class="type-switch" id="type-switch">
+          <button data-t="lost" class="on-lost"><svg class="ic ic-sm"><use href="#i-search" xlink:href="#i-search"/></svg>我丢东西了（寻物）</button>
+          <button data-t="found"><svg class="ic ic-sm"><use href="#i-check" xlink:href="#i-check"/></svg>我捡到东西了（招领）</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-title">物品名称 <i>*</i></label>
+        <input type="text" id="f-title" placeholder="如：黑色无线耳机" maxlength="30">
+        <div class="err" id="e-title">请填写物品名称</div>
+      </div>
+      <div class="field">
+        <label for="f-category">物品分类</label>
+        <select id="f-category">
+          <option>卡证证件</option>
+          <option>数码设备</option>
+          <option>生活用品</option>
+          <option>书籍资料</option>
+          <option>衣物配饰</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-location">遗失 / 拾获地点 <i>*</i></label>
+        <input type="text" id="f-location" placeholder="如：图书馆三楼自习区" maxlength="30">
+        <div class="err" id="e-location">请填写地点</div>
+      </div>
+      <div class="field">
+        <label for="f-time">大致时间</label>
+        <input type="text" id="f-time" placeholder="如：09-22 下午课后（选填）" maxlength="30">
+      </div>
+      <div class="field">
+        <label for="f-desc">详细描述</label>
+        <textarea id="f-desc" placeholder="物品特征、补充说明等，方便对方确认（选填）" maxlength="120"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-contact">联系方式 <i>*</i></label>
+        <input type="text" id="f-contact" aria-describedby="e-contact" placeholder="如：微信 / QQ / 电话" maxlength="40">
+        <div class="err" id="e-contact">请填写联系方式</div>
+      </div>
+      <p id="form-error" class="error-banner" role="alert" hidden></p>
+      <button class="btn-primary" id="btn-submit"><svg class="ic ic-sm"><use href="#i-check" xlink:href="#i-check"/></svg><span id="btn-submit-text">确认发布</span></button>
+    </div>
+  </section>
+
+  <!-- ===== 视图：详情 ===== -->
+  <section class="view" id="view-detail">
+    <div class="detail-card" id="detail-card"></div>
+    <button class="btn-back" id="btn-back"><svg class="ic ic-sm"><use href="#i-back" xlink:href="#i-back"/></svg>返回首页</button>
+  </section>
+
+  <!-- ===== 视图：我的发布 ===== -->
+  <section class="view" id="view-mine">
+    <div class="section-title" style="margin-top:16px">我发布的信息（可修改状态）</div>
+    <p class="page-hint">这里仅显示本浏览器发布的信息。可编辑、更新状态；关闭信息后仍可在搜索和全部状态中查到。</p><div id="mine-list"></div>
+    <div class="form-card backup"><h3>数据备份</h3><p class="page-hint">导出本机信息留存；导入会合并备份中未存在的信息。不同浏览器不会自动同步。</p><button id="export-data" class="btn-back">导出 JSON 备份</button><label class="btn-back" for="import-data">导入 JSON 备份</label><input type="file" id="import-data" accept=".json,application/json"><p class="page-hint">含联系方式，请自行保管备份文件。</p></div>
+  </section>
+
+  <!-- ===== 底部导航 ===== -->
+  <nav class="tabbar" id="tabbar">
+    <button data-v="home" class="on"><svg class="ic"><use href="#i-home" xlink:href="#i-home"/></svg>首页</button>
+    <button data-v="search"><svg class="ic"><use href="#i-search" xlink:href="#i-search"/></svg>搜索</button>
+    <button data-v="publish" class="pub"><span class="fab"><svg class="ic ic-lg"><use href="#i-plus" xlink:href="#i-plus"/></svg></span>发布</button>
+    <button data-v="mine"><svg class="ic"><use href="#i-user" xlink:href="#i-user"/></svg>我的发布</button>
+  </nav>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="js/core.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
