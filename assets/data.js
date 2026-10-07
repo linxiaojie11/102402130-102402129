@@ -9,11 +9,11 @@ window.LF_SEED = [
     location: "图书馆二楼自习区靠窗座位",
     time: "09-21 19:40",
     desc: "蓝色卡套，里面夹着一张图书馆借阅凭证。拾到的同学请联系我，非常感谢！",
-    contact: "QQ：123456789",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "2023级 李同学",
     mine: false,
     status: "open",
-    createdAt: 1758455000000
+    createdAt: 1789991000000
   },
   {
     id: "s2",
@@ -23,11 +23,11 @@ window.LF_SEED = [
     location: "第一食堂一楼失物箱",
     time: "09-21 12:15",
     desc: "伞柄处贴有一个小熊贴纸，已交至食堂一楼失物箱，请失主凭特征认领。",
-    contact: "食堂志愿者 王同学（微信：wangzy0921）",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "食堂志愿者 王同学",
     mine: false,
     status: "open",
-    createdAt: 1758428100000
+    createdAt: 1789964100000
   },
   {
     id: "s3",
@@ -37,11 +37,11 @@ window.LF_SEED = [
     location: "东操场看台第三排",
     time: "09-20 21:05",
     desc: "跑步时遗落，充电仓侧面有一道划痕。如有线索请联系，必有酬谢。",
-    contact: "电话：138****2266",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "2024级 赵同学",
     mine: false,
     status: "open",
-    createdAt: 1758373500000
+    createdAt: 1789909500000
   },
   {
     id: "s4",
@@ -51,11 +51,11 @@ window.LF_SEED = [
     location: "校门口保安亭",
     time: "09-20 09:30",
     desc: "早晨在校门口花坛边捡到，挂件是黄色小鸭子，已存放在保安亭登记。",
-    contact: "保安亭登记领取（报失物编号 Y20260920）",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "保卫处 值班师傅",
     mine: false,
     status: "open",
-    createdAt: 1758331800000
+    createdAt: 1789867800000
   },
   {
     id: "s5",
@@ -65,11 +65,11 @@ window.LF_SEED = [
     location: "三教 305 自习室",
     time: "09-19 16:20",
     desc: "杯身贴有姓名贴“周”，内装枸杞茶。离开教室时忘记带走，望拾到者联系。",
-    contact: "微信：zhouyu_2022",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "2022级 周同学",
     mine: false,
     status: "open",
-    createdAt: 1758269000000
+    createdAt: 1789805000000
   },
   {
     id: "s6",
@@ -79,11 +79,11 @@ window.LF_SEED = [
     location: "图书馆四楼书架区",
     time: "09-19 10:00",
     desc: "扉页写有姓名和班级，书内夹有手写笔记，暂存图书馆服务台，请失主领取。",
-    contact: "图书馆服务台（工作时间 8:00-21:00）",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "图书馆 服务台",
     mine: false,
     status: "open",
-    createdAt: 1758246400000
+    createdAt: 1789782400000
   },
   {
     id: "s7",
@@ -93,11 +93,11 @@ window.LF_SEED = [
     location: "体育馆羽毛球场 2 号场地",
     time: "09-18 20:40",
     desc: "袋子上印有校徽图案。已通过场馆监控找回，感谢帮忙留意的同学！",
-    contact: "微信：chenmo_laptop",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "2023级 陈同学",
     mine: false,
     status: "done",
-    createdAt: 1758199200000
+    createdAt: 1789735200000
   },
   {
     id: "s8",
@@ -107,10 +107,38 @@ window.LF_SEED = [
     location: "校园失物招领中心",
     time: "09-18 08:50",
     desc: "在二食堂餐桌拾到，已上交失物招领中心，失主已凭校园卡领回。",
-    contact: "失物招领中心（行政楼 103）",
+    contact: "示例联系方式：demo_contact（非真实账号）",
     owner: "失物招领中心",
     mine: false,
     status: "done",
-    createdAt: 1758156600000
+    createdAt: 1789692600000
+  },
+  {
+    id: "s9",
+    type: "found",
+    title: "黑色连帽卫衣（XL 码）",
+    category: "衣物配饰",
+    location: "二食堂二楼",
+    time: "09-22 12:30",
+    desc: "袖口内侧有姓名缩写“LY”，已洗净叠好放在二楼服务台，请失主凭特征认领。",
+    contact: "示例联系方式：demo_contact（非真实账号）",
+    owner: "食堂 刘阿姨",
+    mine: false,
+    status: "open",
+    createdAt: 1790076000000
+  },
+  {
+    id: "s10",
+    type: "lost",
+    title: "银框近视眼镜",
+    category: "其他",
+    location: "机房 A201",
+    time: "09-22 16:10",
+    desc: "黑色眼镜盒，盒内附有眼镜布，镜腿螺丝有点松。上机课结束后遗忘在座位上。",
+    contact: "示例联系方式：demo_contact（非真实账号）",
+    owner: "2024级 王同学",
+    mine: false,
+    status: "open",
+    createdAt: 1790066000000
   }
 ];
