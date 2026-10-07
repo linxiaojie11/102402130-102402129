@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>核心业务流程图</title>
+<style>
+  body { margin: 0; padding: 20px 36px; background: #f2f5f7; font-family: "PingFang SC", "Microsoft YaHei", system-ui, Arial, sans-serif; }
+  h1 { font-size: 19px; color: #1f2d39; margin: 0 0 4px; }
+  .sub { font-size: 12px; color: #71808d; margin: 0 0 12px; }
+  svg { background: #fff; border: 1px solid #e7ecf0; border-radius: 14px; box-shadow: 0 2px 10px rgba(31,45,57,.06); }
+  .legend { font-size: 12px; color: #71808d; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>核心业务流程图</h1>
+<p class="sub">发布信息 → 校验 → 入库展示 → 详情 → 状态闭环</p>
+<svg viewBox="0 0 960 745" width="960" height="745" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#71808d"/>
+    </marker>
+  </defs>
+
+  <!-- 开始 -->
+  <rect x="410" y="6" width="140" height="36" rx="18" fill="#e6f5ee" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="29" text-anchor="middle" font-size="13" font-weight="700" fill="#1f7a54">开始</text>
+
+  <!-- 步骤1 -->
+  <rect x="320" y="56" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="80" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">填写发布表单</text>
+  <text x="480" y="99" text-anchor="middle" font-size="10.5" fill="#71808d">名称 * / 分类 / 地点 * / 时间 / 描述 / 联系方式 *</text>
+
+  <!-- 判定1 -->
+  <polygon points="600,158 480,198 360,158 480,118" fill="#fdf0e8" stroke="#e2703a" stroke-width="1.8"/>
+  <text x="480" y="154" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c85a26">必填项</text>
+  <text x="480" y="172" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c85a26">是否完整？</text>
+
+  <!-- 否 → 提示框 -->
+  <rect x="644" y="130" width="240" height="56" rx="12" fill="#fff" stroke="#e7ecf0" stroke-width="1.6"/>
+  <text x="764" y="152" text-anchor="middle" font-size="12" fill="#d9534f">提示缺失项</text>
+  <text x="764" y="170" text-anchor="middle" font-size="10.5" fill="#71808d">请补全带 * 的必填项</text>
+  <!-- 提示框右侧绕回 -->
+  <path d="M 884 158 L 884 83 L 642 83" stroke="#71808d" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+
+  <!-- 步骤2 -->
+  <rect x="320" y="224" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="248" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">生成记录对象</text>
+  <text x="480" y="267" text-anchor="middle" font-size="10.5" fill="#71808d">type / category / status=open / createdAt</text>
+
+  <!-- 步骤3 -->
+  <rect x="320" y="300" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="324" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">写入 localStorage 并渲染首页</text>
+  <text x="480" y="343" text-anchor="middle" font-size="10.5" fill="#71808d">unshift 置顶 · 按 createdAt 倒序展示</text>
+
+  <!-- 步骤4 -->
+  <rect x="320" y="376" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="400" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">用户点击卡片查看详情</text>
+  <text x="480" y="419" text-anchor="middle" font-size="10.5" fill="#71808d">分类 / 地点 / 时间 / 发布人 / 联系方式</text>
+
+  <!-- 判定2 -->
+  <polygon points="600,478 480,518 360,478 480,438" fill="#fdf0e8" stroke="#e2703a" stroke-width="1.8"/>
+  <text x="480" y="472" text-anchor="middle" font-size="12" font-weight="700" fill="#c85a26">本人发布</text>
+  <text x="480" y="490" text-anchor="middle" font-size="12" font-weight="700" fill="#c85a26">且未解决？</text>
+
+  <!-- 否 → 仅浏览 -->
+  <rect x="644" y="450" width="240" height="56" rx="12" fill="#fff" stroke="#e7ecf0" stroke-width="1.6"/>
+  <text x="764" y="472" text-anchor="middle" font-size="12" fill="#1f2d39">仅浏览信息</text>
+  <text x="764" y="490" text-anchor="middle" font-size="10.5" fill="#71808d">可复制联系方式联系发布者</text>
+  <path d="M 764 506 L 764 526" stroke="#71808d" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+  <rect x="664" y="528" width="200" height="38" rx="19" fill="#e6f5ee" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="764" y="552" text-anchor="middle" font-size="12" font-weight="700" fill="#1f7a54">结束</text>
+
+  <!-- 步骤5 -->
+  <rect x="320" y="544" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="568" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">标记为已解决</text>
+  <text x="480" y="587" text-anchor="middle" font-size="10.5" fill="#71808d">status=done · 保存 · 提示成功</text>
+
+  <!-- 步骤6 -->
+  <rect x="320" y="620" width="320" height="54" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="644" text-anchor="middle" font-size="13.5" font-weight="700" fill="#1f2d39">从首页 / 搜索列表移除</text>
+  <text x="480" y="663" text-anchor="middle" font-size="10.5" fill="#71808d">已解决信息不再展示，流程闭环</text>
+
+  <!-- 结束（主线） -->
+  <rect x="410" y="696" width="140" height="36" rx="18" fill="#e6f5ee" stroke="#2f9e6e" stroke-width="1.8"/>
+  <text x="480" y="719" text-anchor="middle" font-size="13" font-weight="700" fill="#1f7a54">结束</text>
+
+  <!-- 竖向箭头 -->
+  <g stroke="#71808d" stroke-width="1.6" fill="none" marker-end="url(#arr)">
+    <path d="M 480 42 L 480 54"/>
+    <path d="M 480 110 L 480 118"/>
+    <path d="M 480 198 L 480 222"/>
+    <path d="M 480 278 L 480 298"/>
+    <path d="M 480 354 L 480 374"/>
+    <path d="M 480 430 L 480 438"/>
+    <path d="M 480 518 L 480 542"/>
+    <path d="M 480 598 L 480 618"/>
+    <path d="M 480 674 L 480 694"/>
+  </g>
+
+  <!-- 分支箭头与标签 -->
+  <g stroke="#71808d" stroke-width="1.6" fill="none" marker-end="url(#arr)">
+    <path d="M 600 158 L 642 158"/>
+    <path d="M 600 478 L 642 478"/>
+  </g>
+  <g font-size="12" fill="#c85a26" font-weight="700">
+    <text x="610" y="150">否</text>
+    <text x="610" y="470">否</text>
+  </g>
+  <g font-size="12" fill="#1f7a54" font-weight="700">
+    <text x="490" y="126">是</text>
+    <text x="490" y="446">是</text>
+  </g>
+  <g font-size="10.5" fill="#71808d">
+    <text x="890" y="122" text-anchor="start">重新填写</text>
+  </g>
+</svg>
+<p class="legend">说明：以「发布信息 → 校验 → 入库展示 → 详情 → 状态闭环」为主线；非本人发布的信息仅可浏览与复制联系方式。</p>
+</body>
+</html>

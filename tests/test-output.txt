@@ -1,0 +1,142 @@
+﻿TAP version 13
+# Subtest: esc：HTML 特殊字符全部转义
+ok 1 - esc：HTML 特殊字符全部转义
+  ---
+  duration_ms: 1.2502
+  type: 'test'
+  ...
+# Subtest: esc：null / undefined 返回空串，不抛异常
+ok 2 - esc：null / undefined 返回空串，不抛异常
+  ---
+  duration_ms: 0.0953
+  type: 'test'
+  ...
+# Subtest: esc：普通文本原样返回
+ok 3 - esc：普通文本原样返回
+  ---
+  duration_ms: 0.0971
+  type: 'test'
+  ...
+# Subtest: typeText：lost 显示「寻物」，found 显示「招领」
+ok 4 - typeText：lost 显示「寻物」，found 显示「招领」
+  ---
+  duration_ms: 0.1306
+  type: 'test'
+  ...
+# Subtest: statusText：done 显示「已解决」，其他显示「进行中」
+ok 5 - statusText：done 显示「已解决」，其他显示「进行中」
+  ---
+  duration_ms: 0.0983
+  type: 'test'
+  ...
+# Subtest: relTime：1 分钟内显示「刚刚」
+ok 6 - relTime：1 分钟内显示「刚刚」
+  ---
+  duration_ms: 0.1534
+  type: 'test'
+  ...
+# Subtest: relTime：刚好 1 分钟显示「1 分钟前」
+ok 7 - relTime：刚好 1 分钟显示「1 分钟前」
+  ---
+  duration_ms: 0.1159
+  type: 'test'
+  ...
+# Subtest: relTime：5 分钟 / 3 小时 / 2 天
+ok 8 - relTime：5 分钟 / 3 小时 / 2 天
+  ---
+  duration_ms: 0.1699
+  type: 'test'
+  ...
+# Subtest: relTime：超过 7 天回退为「MM-DD」日期
+ok 9 - relTime：超过 7 天回退为「MM-DD」日期
+  ---
+  duration_ms: 2.1143
+  type: 'test'
+  ...
+# Subtest: relTime：无时间戳返回空串
+ok 10 - relTime：无时间戳返回空串
+  ---
+  duration_ms: 0.181
+  type: 'test'
+  ...
+# Subtest: homeFilter：已解决信息一律不展示
+ok 11 - homeFilter：已解决信息一律不展示
+  ---
+  duration_ms: 0.0812
+  type: 'test'
+  ...
+# Subtest: homeFilter：类型筛选（寻物/招领）
+ok 12 - homeFilter：类型筛选（寻物/招领）
+  ---
+  duration_ms: 0.0619
+  type: 'test'
+  ...
+# Subtest: homeFilter：类别筛选
+ok 13 - homeFilter：类别筛选
+  ---
+  duration_ms: 0.0539
+  type: 'test'
+  ...
+# Subtest: homeFilter：地点筛选
+ok 14 - homeFilter：地点筛选
+  ---
+  duration_ms: 0.0494
+  type: 'test'
+  ...
+# Subtest: homeFilter：类型+类别+地点组合筛选
+ok 15 - homeFilter：类型+类别+地点组合筛选
+  ---
+  duration_ms: 0.0541
+  type: 'test'
+  ...
+# Subtest: homeFilter：全部条件时进行中信息都展示
+ok 16 - homeFilter：全部条件时进行中信息都展示
+  ---
+  duration_ms: 0.0529
+  type: 'test'
+  ...
+# Subtest: searchMatch：命中标题 / 地点 / 分类 / 描述 / 类型字段
+ok 17 - searchMatch：命中标题 / 地点 / 分类 / 描述 / 类型字段
+  ---
+  duration_ms: 0.0878
+  type: 'test'
+  ...
+# Subtest: searchMatch：英文大小写不敏感
+ok 18 - searchMatch：英文大小写不敏感
+  ---
+  duration_ms: 0.0676
+  type: 'test'
+  ...
+# Subtest: searchMatch：首尾空白被忽略
+ok 19 - searchMatch：首尾空白被忽略
+  ---
+  duration_ms: 0.0584
+  type: 'test'
+  ...
+# Subtest: searchMatch：空关键词 / 无匹配返回 false
+ok 20 - searchMatch：空关键词 / 无匹配返回 false
+  ---
+  duration_ms: 0.6082
+  type: 'test'
+  ...
+# Subtest: buildShareText：寻物启事包含标题/分类/遗失地点/时间/描述/联系方式/落款
+ok 21 - buildShareText：寻物启事包含标题/分类/遗失地点/时间/描述/联系方式/落款
+  ---
+  duration_ms: 0.1481
+  type: 'test'
+  ...
+# Subtest: buildShareText：招领启事显示拾获地点，无描述时省略该行，时间为空显示未填写
+ok 22 - buildShareText：招领启事显示拾获地点，无描述时省略该行，时间为空显示未填写
+  ---
+  duration_ms: 0.1306
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.5368

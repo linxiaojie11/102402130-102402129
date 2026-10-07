@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据流图</title>
+<style>
+  body { margin: 0; padding: 28px 36px; background: #f2f5f7; font-family: "PingFang SC", "Microsoft YaHei", system-ui, Arial, sans-serif; }
+  h1 { font-size: 20px; color: #1f2d39; margin: 0 0 6px; }
+  .sub { font-size: 12px; color: #71808d; margin: 0 0 18px; }
+  svg { background: #fff; border: 1px solid #e7ecf0; border-radius: 14px; box-shadow: 0 2px 10px rgba(31,45,57,.06); }
+  .legend { font-size: 12px; color: #71808d; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>系统数据流图（DFD）</h1>
+<p class="sub">校园失物招领小程序原型 · 单文件 HTML + localStorage</p>
+<svg viewBox="0 0 960 620" width="960" height="620" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#71808d"/>
+    </marker>
+  </defs>
+
+  <!-- ===== 外部实体：用户 ===== -->
+  <ellipse cx="110" cy="320" rx="95" ry="55" fill="#e6f5ee" stroke="#2f9e6e" stroke-width="2"/>
+  <text x="110" y="314" text-anchor="middle" font-size="15" font-weight="700" fill="#1f7a54">用户</text>
+  <text x="110" y="334" text-anchor="middle" font-size="11" fill="#1f7a54">失主 / 拾主 / 浏览者</text>
+
+  <!-- ===== 处理（Process）===== -->
+  <g font-size="14" fill="#1f2d39" text-anchor="middle">
+    <!-- P1 发布信息 -->
+    <rect x="290" y="84" width="250" height="72" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+    <text x="415" y="112" font-weight="700">P1 · 发布信息</text>
+    <text x="415" y="134" font-size="11" fill="#71808d">填写表单 → 校验 → 写入</text>
+    <!-- P2 搜索/筛选 -->
+    <rect x="290" y="200" width="250" height="72" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+    <text x="415" y="228" font-weight="700">P2 · 搜索 / 筛选</text>
+    <text x="415" y="250" font-size="11" fill="#71808d">关键词 · 类型 · 类别 · 地点</text>
+    <!-- P3 查看详情/标记解决 -->
+    <rect x="290" y="316" width="250" height="72" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+    <text x="415" y="344" font-weight="700">P3 · 查看详情 / 标记解决</text>
+    <text x="415" y="366" font-size="11" fill="#71808d">完整信息 · 联系方式 · 状态流转</text>
+    <!-- P4 我的发布管理 -->
+    <rect x="290" y="432" width="250" height="72" rx="12" fill="#ffffff" stroke="#2f9e6e" stroke-width="1.8"/>
+    <text x="415" y="460" font-weight="700">P4 · 我的发布管理</text>
+    <text x="415" y="482" font-size="11" fill="#71808d">编辑信息 · 状态管理</text>
+  </g>
+
+  <!-- ===== 数据存储（Data Store）===== -->
+  <g font-size="13" fill="#1f2d39" text-anchor="middle">
+    <!-- D1 localStorage -->
+    <path d="M 655 120 h 240 a 20 20 0 0 1 0 40 v 20 a 20 20 0 0 1 -20 20 h -200 a 20 20 0 0 1 -20 -20 v -20 a 20 20 0 0 1 20 -20 z" fill="#f0faf5" stroke="#0ea5a0" stroke-width="1.8"/>
+    <ellipse cx="775" cy="126" rx="120" ry="14" fill="#d9f2e9" stroke="#0ea5a0" stroke-width="1.8"/>
+    <text x="775" y="172" font-weight="700">D1 · 本地数据</text>
+    <text x="775" y="190" font-size="11" fill="#71808d">localStorage（lf_proto_items_v2）</text>
+    <!-- D2 LF_SEED -->
+    <path d="M 655 400 h 240 a 20 20 0 0 1 0 40 v 20 a 20 20 0 0 1 -20 20 h -200 a 20 20 0 0 1 -20 -20 v -20 a 20 20 0 0 1 20 -20 z" fill="#f0faf5" stroke="#0ea5a0" stroke-width="1.8"/>
+    <ellipse cx="775" cy="406" rx="120" ry="14" fill="#d9f2e9" stroke="#0ea5a0" stroke-width="1.8"/>
+    <text x="775" y="452" font-weight="700">D2 · 示例数据</text>
+    <text x="775" y="470" font-size="11" fill="#71808d">LF_SEED（assets/data.js，10 条）</text>
+  </g>
+
+  <!-- ===== 数据流 ===== -->
+  <g stroke="#71808d" stroke-width="1.6" fill="none" marker-end="url(#arr)">
+    <!-- 1 用户 → P1 -->
+    <path d="M 205 296 L 205 120 L 288 120"/>
+    <!-- 2 用户 → P2 -->
+    <path d="M 205 320 L 288 320"/>
+    <!-- 3 用户 → P3 -->
+    <path d="M 205 352 L 288 352"/>
+    <!-- 4 P1 → D1 -->
+    <path d="M 540 132 L 653 132"/>
+    <!-- 5 D1 → P2 -->
+    <path d="M 665 190 L 665 236 L 542 236"/>
+    <!-- 6 D2 → D1（无记录时回退初始化）-->
+    <path d="M 675 400 L 675 192"/>
+    <!-- 7 P3 → D1 -->
+    <path d="M 540 352 L 618 352 L 618 158 L 653 158"/>
+    <!-- 8 P4 → D1 -->
+    <path d="M 540 468 L 618 468 L 618 160 L 653 160"/>
+    <!-- 9 P2 → 用户 -->
+    <path d="M 288 270 L 210 296"/>
+    <!-- 10 P3 → 用户 -->
+    <path d="M 288 366 L 205 366"/>
+  </g>
+
+  <!-- ===== 流标签 ===== -->
+  <g font-size="11.5" fill="#71808d">
+    <text x="196" y="212" text-anchor="end">发布表单</text>
+    <text x="248" y="310">搜索词 / 筛选条件</text>
+    <text x="248" y="340">点击卡片</text>
+    <text x="596" y="122" text-anchor="middle">写入记录</text>
+    <text x="560" y="228" text-anchor="middle">读取记录</text>
+    <text x="682" y="300">无记录时回退初始化</text>
+    <text x="575" y="342" text-anchor="middle">更新状态</text>
+    <text x="575" y="458" text-anchor="middle">编辑保存</text>
+    <text x="246" y="282">结果列表</text>
+    <text x="246" y="356" text-anchor="end">详情 / 联系方式</text>
+  </g>
+</svg>
+<p class="legend">说明：用户通过四个处理环节与本地数据交互；页面首次加载时若 localStorage 无数据，自动以 LF_SEED 示例数据初始化。</p>
+</body>
+</html>
